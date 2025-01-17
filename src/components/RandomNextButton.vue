@@ -1,40 +1,32 @@
 <script setup lang="ts">
-import { dayNo } from '~/state'
+import { dayNo, daySince, isDev } from '~/state'
 import { answers } from '~/answers/list'
 import { t } from '~/i18n'
+import { DAYS_PLAY_BACK } from '~/logic/constants'
 
 function goToRandomNext() {
   const currentDay = dayNo.value
-  let nextDay
-  let attempts = 0
-  const maxAttempts = 10 // 防止无限循环
 
-  do {
-    nextDay = Math.floor(Math.random() * answers.length) + 1
-    attempts++
-    // 确保新的一天:
-    // 1. 不是当前天
-    // 2. 在答案范围内
-    // 3. 对应的答案存在
-  } while ((nextDay === currentDay
-           || nextDay >= answers.length
-           || !answers[nextDay]
-           || !answers[nextDay][0])
-           && attempts < maxAttempts)
+  // 获取所有有效答案的索引
+  const validDays = answers.reduce((acc, answer, index) => {
+    // 在非开发环境下,只选择在允许范围内的题目
+    const isInRange = isDev || (daySince.value - index <= DAYS_PLAY_BACK)
+    if (answer && answer[0] && index !== currentDay && isInRange)
+      acc.push(index)
 
-  // 如果找到有效答案就跳转
-  if (attempts < maxAttempts && answers[nextDay] && answers[nextDay][0]) {
-    window.location.href = `/?d=${nextDay}`
+    return acc
+  }, [] as number[])
+
+  if (validDays.length === 0) {
+    console.warn('No valid answers found')
+    return
   }
-  else {
-    // 如果没找到,跳转到第一个有效答案
-    for (let i = 0; i < answers.length; i++) {
-      if (answers[i] && answers[i][0] && i !== currentDay) {
-        window.location.href = `/?d=${i}`
-        break
-      }
-    }
-  }
+
+  // 随机选择一个有效的日期
+  const randomIndex = Math.floor(Math.random() * validDays.length)
+  const nextDay = validDays[randomIndex]
+
+  window.location.href = `/?d=${nextDay}`
 }
 </script>
 

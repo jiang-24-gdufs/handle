@@ -24,7 +24,7 @@ watch(daySince, (n, o) => {
 watch([isFinished, meta], () => {
   if (isFinished.value)
     markEnd()
-    // sendAnalytics()
+  // sendAnalytics()
 }, { flush: 'post' })
 
 watch(isFinished, (v) => {
@@ -70,6 +70,6 @@ if (import.meta.hot) {
   console.log(`${answers.length} days prepared`)
   // eslint-disable-next-line no-console
   console.log(`${answers.length - dayNo.value} days left`)
-  if ((answers.length - daySince.value) < 10)
-    throw new Error('Not enough days left!')
+  if (isDev && (answers.length - daySince.value) < 10)
+    console.warn('Warning: Less than 10 days of answers remaining!')
 }

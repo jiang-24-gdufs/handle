@@ -14,7 +14,10 @@ const formatted = computed(() => {
 <template>
   <div pt12 pb16>
     <div flex="~ col" items-center>
-      <ShareButton m4 />
+      <div flex="~ wrap gap-x-2 center">
+        <ShareButton />
+        <RandomNextButton />
+      </div>
       <ToggleMask :hint="true" />
     </div>
 

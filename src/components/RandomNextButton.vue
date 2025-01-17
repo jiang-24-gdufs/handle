@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { showShareDialog } from '~/state'
+import { answers } from '~/answers/list'
+import { answer, dayNo } from '~/state'
 import { t } from '~/i18n'
 
 function goToRandomNext() {
